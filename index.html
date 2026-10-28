@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cecibel Villamor — Social Media Manager · Content Strategist · Virtual Assistant</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Onest:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Importmap for Lenis -->
+  <script type="importmap">
+    {
+      "imports": {
+        "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.19/dist/lenis.mjs"
+      }
+    }
+  </script>
+
+  <style>
+    /* -------------------------------------------------------------
+        1. CSS Reset & Base System
+    ------------------------------------------------------------- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    img, video { display: block; max-width: 100%; }
+    ul, ol { list-style: none; }
+    a { color: inherit; text-decoration: none; }
+    button { background: none; border: none; font: inherit; color: inherit; cursor: pointer; }
+
+    :root {
+      --font-display: "Anton", sans-serif;
+      --font-sans: "Onest", sans-serif;
+      --background: #08080a;
+      --foreground: #f3f1ea;
+      --surface: #111114;
+      --surface-2: #17171b;
+      --muted: #807f78;
+      --line: rgba(243, 241, 234, 0.1);
+      --line-strong: rgba(243, 241, 234, 0.22);
+      --accent: #ff3b1d;
+      --accent-2: #ff6a3d;
+      --gutter: 2.5rem;
+      --section: 9rem;
+    }
+
+    ::selection { background: var(--accent); color: var(--background); }
+
+    /* Rem-based Adaptive Grid */
+    html { font-size: 16px; background: var(--background); scroll-behavior: auto; }
+    @media (max-width: 1920px) { html { font-size: 0.833333vw; } }
+    @media (max-width: 1440px) { html { font-size: 1.111111vw; } }
+    @media (max-width: 1024px) { html { font-size: 1.5625vw; } }
+    @media (max-width: 640px) {
+      html { font-size: 4.444444vw; }
+      :root { --gutter: 16px; }
+    }
+
+    body {
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    /* Type Scale Utility Classes */
+    .text-mega { font-size: 11rem; line-height: 0.86; font-family: var(--font-display); text-transform: uppercase; }
+    .text-display { font-size: 7.5rem; line-height: 0.9; font-family: var(--font-display); text-transform: uppercase; }
+    .text-h1 { font-size: 5rem; line-height: 0.95; font-family: var(--font-display); text-transform: uppercase; }
+    .text-h2 { font-size: 3.25rem; line-height: 1; font-family: var(--font-display); text-transform: uppercase; }
+    .text-h3 { font-size: 1.75rem; line-height: 1.15; font-family: var(--font-sans); font-weight: 600; }
+    .text-lead { font-size: 1.375rem; line-height: 1.45; color: var(--muted); }
+    .text-body { font-size: 1.0625rem; line-height: 1.6; color: var(--muted); }
+    .text-eyebrow { font-size: 0.8125rem; line-height: 1.2; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); }
+
+    /* Eyebrow Component */
+    .eyebrow { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); }
+    .eyebrow-dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--accent); flex-shrink: 0; }
+
+    /* Motion Wrappers & Revealed States */
+    .reveal-line-wrap { overflow: hidden; display: block; }
+    .reveal-line { display: block; transform: translateY(110%); opacity: 0; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal-fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.62s cubic-bezier(0.16, 1, 0.3, 1), transform 0.62s cubic-bezier(0.16, 1, 0.3, 1); }
+    
+    .in-view .reveal-line { transform: translateY(0); opacity: 1; }
+    .in-view .reveal-fade-up, .in-view.reveal-fade-up { opacity: 1; transform: translateY(0); }
+
+    /* Preloader */
+    #preloader {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--background); padding: var(--gutter);
+      display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 0.75rem;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @media (min-width: 640px) {
+      #preloader { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+    }
+    .preloader-brand { font-family: var(--font-display); font-size: 1.75rem; text-transform: uppercase; line-height: 1; color: var(--foreground); }
+    .preloader-counter { font-family: var(--font-display); font-size: 7.5rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--foreground); }
+    .preloader-counter span { color: var(--accent); }
+
+    /* Header Nav */
+    header { position: fixed; inset-inline: 0; top: 0; z-index: 50; pointer-events: none; }
+    nav.nav-bar { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: 1.5rem var(--gutter); background: rgba(8, 8, 10, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+    .logo-badge { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; border: 1px solid var(--line-strong); font-weight: 600; letter-spacing: -0.01em; }
+    .nav-links { display: none; gap: 1.5rem; align-items: center; }
+    @media (min-width: 1024px) { .nav-links { display: flex; } }
+    .nav-links a { position: relative; font-size: 0.8125rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); }
+    .nav-links a::after { content: ""; position: absolute; bottom: -0.25rem; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; }
+    .nav-links a:hover { color: var(--foreground); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* Canva Portfolio Nav Button */
+    .nav-canva-btn {
+      background: var(--accent) !important;
+      color: var(--background) !important;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600 !important;
+      transition: background 0.3s ease, transform 0.2s ease !important;
+    }
+    .nav-canva-btn:hover { background: var(--accent-2) !important; transform: translateY(-1px); }
+    .nav-canva-btn::after { display: none !important; }
+
+    .burger-btn { display: flex; flex-direction: column; gap: 0.375rem; width: 2.5rem; height: 2.5rem; justify-content: center; align-items: center; }
+    @media (min-width: 1024px) { .burger-btn { display: none; } }
+    .burger-bar { width: 1.5rem; height: 0.125rem; background: var(--foreground); transition: transform 0.3s ease, opacity 0.3s ease; }
+    
+    .mobile-menu {
+      position: fixed; inset: 0; z-index: 45; background: var(--background);
+      padding-inline: var(--gutter); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.25rem;
+      opacity: 0; pointer-events: none; transition: opacity 0.45s ease;
+    }
+    .mobile-menu.active { opacity: 1; pointer-events: auto; }
+    .mobile-menu a { font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; line-height: 1; color: var(--foreground); }
+    .mobile-menu a.canva-mobile { color: var(--accent); }
+
+    /* Hero Section */
+    #top { position: relative; display: flex; flex-direction: column; min-height: 100svh; overflow: hidden; }
+    .hero-top { z-index: 30; padding: 7rem var(--gutter) 0; display: flex; flex-direction: column; gap: 2rem; }
+    @media (min-width: 640px) { .hero-top { flex-direction: row; justify-content: space-between; align-items: flex-start; padding-top: 8rem; } }
+    .hero-roles { font-family: var(--font-display); text-transform: uppercase; line-height: 1.05; letter-spacing: -0.01em; color: var(--foreground); font-size: 1.75rem; }
+    @media (min-width: 640px) { .hero-roles { font-size: 3.25rem; } }
+    .hero-desc { max-width: 28rem; font-size: 1.0625rem; color: var(--muted); }
+    @media (min-width: 640px) { .hero-desc { text-align: right; } }
+
+    .hero-cta-group { margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    @media (min-width: 640px) { .hero-cta-group { justify-content: flex-end; } }
+    
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent); color: var(--background);
+      padding: 0.875rem 1.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.12em; font-size: 0.875rem; border-radius: 4px;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .btn-primary:hover { background: var(--accent-2); transform: translateY(-2px); }
+
+    /* Interactive Grayscale-to-Color Spotlight Portrait Styles */
+    .hero-portrait-wrapper {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      height: 86vh; width: 80vw; z-index: 20; pointer-events: auto;
+      cursor: crosshair;
+    }
+    @media (min-width: 640px) { .hero-portrait-wrapper { width: 48vw; } }
+    @media (min-width: 1024px) { .hero-portrait-wrapper { width: 36vw; } }
+
+    .portrait-base {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top;
+      filter: grayscale(100%) contrast(1.1);
+      transition: filter 0.4s ease;
+    }
+    .portrait-color-overlay {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      --mouse-x: -500px;
+      --mouse-y: -500px;
+      -webkit-mask-image: radial-gradient(circle 130px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+      mask-image: radial-gradient(circle 130px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+      transition: mask-image 0.05s ease, -webkit-mask-image 0.05s ease;
+    }
+    .portrait-color-overlay img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    }
+
+    .hero-gradient-base { position: absolute; inset-inline: 0; bottom: 0; z-index: 20; height: 26vh; background: linear-gradient(to bottom, transparent, #08080a); pointer-events: none; }
+
+    .hero-name-wrap {
+      position: absolute; inset-inline: 0; bottom: 0; transform: translateY(6%); z-index: 10;
+      display: flex; flex-direction: column; align-items: center;
+      font-family: var(--font-display); text-transform: uppercase; line-height: 0.78; letter-spacing: -0.01em; color: var(--accent);
+      font-size: 10rem; pointer-events: none; text-align: center; white-space: nowrap;
+    }
+    @media (min-width: 640px) { .hero-name-wrap { font-size: 21rem; } }
+
+    .scroll-cue {
+      position: absolute; bottom: 2rem; left: var(--gutter); z-index: 30;
+      display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted);
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    .scroll-cue::before { content: ""; width: 1px; height: 2.5rem; background: var(--accent); }
+
+    /* Marquee */
+    .marquee-section { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 2rem 0; }
+    .marquee-track { display: flex; width: max-content; animation: marquee 22s linear infinite; }
+    .marquee-word { font-family: var(--font-display); font-size: 3.25rem; text-transform: uppercase; letter-spacing: -0.01em; display: flex; align-items: center; white-space: nowrap; }
+    .marquee-dot { margin-inline: 2rem; width: 0.625rem; height: 0.625rem; border-radius: 9999px; background: var(--accent); flex-shrink: 0; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* Section Global Spacing & Layout */
+    section { padding: var(--section) var(--gutter); position: relative; }
+    .section-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+    @media (min-width: 1024px) { .section-grid { grid-template-columns: repeat(12, 1fr); gap: var(--gutter); } }
+
+    /* Story Section */
+    .story-left { grid-column: span 1; }
+    @media (min-width: 1024px) { .story-left { grid-column: span 6; } }
+    .story-right { grid-column: span 1; }
+    @media (min-width: 1024px) { .story-right { grid-column: span 6; padding-top: 0.5rem; } }
+
+    .principle-item { display: grid; grid-template-columns: auto 1fr; column-gap: 1.5rem; border-top: 1px solid var(--line); padding: 2rem 0; }
+    .principle-item:last-child { border-bottom: 1px solid var(--line); }
+    .principle-num { font-family: var(--font-sans); font-size: 1.75rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--accent); }
+
+    /* Ventures / Campaigns Section */
+    .ventures-header { display: flex; flex-direction: column; gap: 1rem; }
+    @media (min-width: 640px) { .ventures-header { flex-direction: row; justify-content: space-between; align-items: flex-end; } }
+    
+    .ventures-list { display: grid; grid-template-columns: 1fr; column-gap: var(--gutter); row-gap: 4rem; margin-top: 4rem; }
+    @media (min-width: 768px) { .ventures-list { grid-template-columns: repeat(2, 1fr); } }
+
+    .venture-meta { margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; }
+    .venture-title { transition: color 0.34s ease; cursor: pointer; }
+    .venture-title:hover { color: var(--accent); }
+
+    /* Media Grid */
+    .media-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-top: 4rem; }
+    @media (min-width: 768px) { .media-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1200px) { .media-grid.three-col { grid-template-columns: repeat(3, 1fr); } }
+
+    .media-card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+    .media-card video, .media-card img { width: 100%; aspect-ratio: 9/16; object-fit: cover; background: #000; }
+    .media-card.poster-card img { aspect-ratio: 3/4; object-fit: cover; }
+    .media-card.reddit-card img { width: 100%; height: auto; aspect-ratio: 16/10; object-fit: cover; object-position: top; background: #17171b; }
+    .media-card-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
+
+    .badge-linkedin {
+      display: inline-block; background: #0a66c2; color: #fff; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 3px; margin: 1.5rem 1.5rem 0 1.5rem; width: max-content;
+    }
+
+    /* Contact Cards / Messaging Actions */
+    .contact-links-grid {
+      display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 3rem;
+    }
+    @media (min-width: 768px) { .contact-links-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .contact-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+      padding: 2rem; display: flex; flex-direction: column; gap: 1rem;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .contact-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .contact-card h3 { font-size: 1.25rem; font-weight: 600; }
+    .contact-card p { color: var(--muted); font-size: 0.95rem; }
+    .contact-card a {
+      margin-top: auto; display: inline-flex; align-items: center; gap: 0.5rem;
+      font-weight: 600; color: var(--accent); text-transform: uppercase; font-size: 0.8125rem; letter-spacing: 0.12em;
+    }
+
+    /* Impact Section */
+    .impact-grid { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--line); margin-top: 4rem; }
+    @media (min-width: 640px) { .impact-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .impact-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .stat-cell { display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid var(--line); padding: 2.5rem 0; transition: padding 0.3s ease; }
+    @media (min-width: 1024px) { .stat-cell { padding: 3rem 0; } }
+    @media (min-width: 640px) { .stat-cell:nth-child(even) { border-left: 1px solid var(--line); padding-left: 2rem; } }
+    @media (min-width: 1024px) { 
+      .stat-cell:nth-child(even) { border-left: none; padding-left: 0; }
+      .stat-cell:not(:first-child) { border-left: 1px solid var(--line); padding-left: 2rem; }
+    }
+    .stat-figure { font-family: var(--font-display); font-size: 6.5rem; line-height: 1; letter-spacing: -0.01em; transition: color 0.34s ease; cursor: default; }
+    .stat-figure:hover { color: var(--accent); }
+
+    /* Footer Section */
+    #contact { padding-bottom: 0; }
+    .email-link {
+      display: inline-flex; align-items: baseline; gap: 0.75rem;
+      font-family: var(--font-sans); font-size: 2.5rem; font-weight: 600; letter-spacing: -0.01em; word-break: break-all;
+      transition: transform 0.34s ease, color 0.34s ease; margin-top: 2rem;
+    }
+    @media (min-width: 640px) { .email-link { font-size: 3.5rem; gap: 1rem; } }
+    .email-link:hover { transform: translateX(14px); color: var(--accent); }
+
+    .footer-bar { margin-top: var(--section); border-top: 1px solid var(--line); padding: 3rem 0; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+    @media (min-width: 1024px) { .footer-bar { grid-template-columns: repeat(12, 1fr); } }
+
+    .footer-left { grid-column: span 1; }
+    @media (min-width: 1024px) { .footer-left { grid-column: span 6; } }
+    .footer-mid { grid-column: span 1; }
+    @media (min-width: 1024px) { .footer-mid { grid-column: span 3; } }
+    .footer-right { grid-column: span 1; }
+    @media (min-width: 1024px) { .footer-right { grid-column: span 3; text-align: right; } }
+
+    .social-link { display: flex; align-items: center; font-size: 1.0625rem; color: var(--muted); transition: color 0.3s ease; }
+    .social-link::before { content: ""; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; margin-right: 0; }
+    .social-link:hover { color: var(--foreground); }
+    .social-link:hover::before { width: 1.5rem; margin-right: 0.5rem; }
+
+    /* LiquidImage Filter Component */
+    .liquid-image-container { position: relative; overflow: hidden; background: var(--surface); width: 100%; height: 100%; }
+    .liquid-image-container.bare { background: transparent; }
+    .liquid-image-container img, .liquid-image-container video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; filter: url(#liquidFilter); }
+    
+    .liquid-veil { position: absolute; inset: 0; background: var(--surface-2); mix-blend-mode: color; opacity: 0.88; transition: opacity 0.38s ease; pointer-events: none; }
+    .liquid-glow { position: absolute; inset: 0; background: linear-gradient(120deg, transparent 30%, color-mix(in srgb, var(--accent) 35%, transparent) 50%, transparent 70%); opacity: 0; transition: opacity 0.38s ease; pointer-events: none; }
+    .liquid-vignette { position: absolute; inset: 0; background: radial-gradient(120% 120% at 50% 120%, color-mix(in srgb, #08080a 70%, transparent), transparent 60%); pointer-events: none; }
+    .liquid-image-container:not(.bare):hover .liquid-veil { opacity: 0; }
+    .liquid-image-container:not(.bare):hover .liquid-glow { opacity: 1; }
+
+    @media (prefers-reduced-motion: reduce) {
+      #preloader { display: none !important; }
+      .marquee-track { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Reusable Global SVG Liquid Displacement Filter -->
+  <svg style="width:0; height:0; position:absolute;" aria-hidden="true">
+    <filter id="liquidFilter">
+      <feTurbulence id="feTurbulence" type="fractalNoise" baseFrequency="0.009" numOctaves="2" result="noise" />
+      <feDisplacementMap id="feDisplacementMap" in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+
+  <!-- Preloader -->
+  <div id="preloader" role="dialog" aria-label="Loading site">
+    <div class="preloader-brand">Cecibel Villamor</div>
+    <div class="preloader-counter"><span id="counter-val">0</span>%</div>
+  </div>
+
+  <!-- Site Nav -->
+  <header>
+    <nav class="nav-bar" aria-label="Main Navigation">
+      <a href="#top" style="display:flex; align-items:center; gap:0.75rem;">
+        <div class="logo-badge">CV</div>
+        <span class="text-eyebrow" style="color:var(--muted); display:none;" id="nav-brand-text">Cecibel Villamor</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#story">Expertise</a></li>
+        <li><a href="#ventures">Campaigns</a></li>
+        <li><a href="#videos">Video Reels</a></li>
+        <li><a href="#reddit">Reddit Content</a></li>
+        <li><a href="#gallery">Posters</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="https://canva.link/d8q219b1noelegd" target="_blank" rel="noopener noreferrer" class="nav-canva-btn">Canva Portfolio ↗</a></li>
+      </ul>
+      <button class="burger-btn" id="burger-btn" aria-label="Toggle Navigation Menu">
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Mobile Menu Panel -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#story" class="mobile-nav-link">Expertise</a>
+    <a href="#ventures" class="mobile-nav-link">Campaigns</a>
+    <a href="#videos" class="mobile-nav-link">Video Reels</a>
+    <a href="#reddit" class="mobile-nav-link">Reddit Content</a>
+    <a href="#gallery" class="mobile-nav-link">Posters</a>
+    <a href="#contact" class="mobile-nav-link">Contact</a>
+    <a href="https://canva.link/d8q219b1noelegd" target="_blank" rel="noopener noreferrer" class="canva-mobile">Canva Portfolio ↗</a>
+  </div>
+
+  <!-- Page Main Content -->
+  <main style="position:relative; width:100%; overflow-x:hidden;">
+
+    <!-- 1. HERO -->
+    <section id="top">
+      <div class="hero-top">
+        <h2 class="hero-roles">
+          <span class="reveal-line-wrap"><span class="reveal-line">Social Media Manager</span></span>
+          <span class="reveal-line-wrap"><span class="reveal-line">Content Strategist</span></span>
+          <span class="reveal-line-wrap"><span class="reveal-line">Virtual Assistant</span></span>
+          <span class="reveal-line-wrap"><span class="reveal-line">Creative Operator</span></span>
+        </h2>
+        <div>
+          <p class="hero-desc reveal-fade-up">
+            I craft engaging social media campaigns, streamline digital workflows, and elevate brand presence across platforms. Eight years of driving organic growth, content creation, and seamless administrative execution.
+          </p>
+          <div class="hero-cta-group reveal-fade-up">
+            <a href="https://canva.link/d8q219b1noelegd" target="_blank" rel="noopener noreferrer" class="btn-primary">
+              View Canva Portfolio ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Grayscale-to-Color Spotlight Portrait -->
+      <div class="hero-portrait-wrapper" id="portrait-container">
+        <img src="IMAGES/CecibelPhoto.png" alt="Cecibel Villamor Portrait Grayscale" class="portrait-base" />
+        <div class="portrait-color-overlay" id="color-overlay">
+          <img src="IMAGES/CecibelPhoto.png" alt="Cecibel Villamor Portrait Color" />
+        </div>
+      </div>
+
+      <div class="hero-gradient-base"></div>
+
+      <h1 class="hero-name-wrap" id="hero-name">
+        <div style="display:flex;" id="hero-line-1"></div>
+        <div style="display:flex;" id="hero-line-2"></div>
+      </h1>
+
+      <div class="scroll-cue" id="scroll-cue">Scroll to explore</div>
+    </section>
+
+    <!-- 2. MARQUEE -->
+    <section class="marquee-section" aria-label="Core operational tools & skills">
+      <div class="marquee-track">
+        <div class="marquee-word">Canva & CapCut <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Metricool Analytics <div class="marquee-dot"></div></div>
+        <div class="marquee-word">GoHighLevel CRM <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Content Calendars <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Workflow Automation <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Canva & CapCut <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Metricool Analytics <div class="marquee-dot"></div></div>
+        <div class="marquee-word">GoHighLevel CRM <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Content Calendars <div class="marquee-dot"></div></div>
+        <div class="marquee-word">Workflow Automation <div class="marquee-dot"></div></div>
+      </div>
+    </section>
+
+    <!-- 3. EXPERTISE / STORY -->
+    <section id="story">
+      <div class="section-grid">
+        <div class="story-left">
+          <div class="eyebrow"><div class="eyebrow-dot"></div>Core Expertise</div>
+          <h2 class="text-h1" style="margin-top:1.5rem; max-width:16ch;">
+            <span class="reveal-line-wrap"><span class="reveal-line">Strategy meets</span></span>
+            <span class="reveal-line-wrap"><span class="reveal-line">seamless execution.</span></span>
+          </h2>
+          <p class="text-lead reveal-fade-up" style="margin-top:2rem; max-width:46ch;">
+            For eight years, I've partnered with growing brands and online communities to translate creative ideas into structured campaigns. From managing multi-platform schedules to optimizing CRM funnels and producing high-converting visual assets, my approach is rooted in organization, creativity, and measurable results.
+          </p>
+        </div>
+
+        <div class="story-right">
+          <ul>
+            <li class="principle-item reveal-fade-up">
+              <span class="principle-num">01</span>
+              <div>
+                <h3 class="text-h3">Data-Backed Social Strategy</h3>
+                <p class="text-body" style="margin-top:0.75rem; max-width:44ch;">Leveraging analytics tools like Metricool to track performance, refine posting cadences, and maximize audience engagement across Facebook and Instagram.</p>
+              </div>
+            </li>
+            <li class="principle-item reveal-fade-up">
+              <span class="principle-num">02</span>
+              <div>
+                <h3 class="text-h3">Multimodal Content Creation</h3>
+                <p class="text-body" style="margin-top:0.75rem; max-width:44ch;">Designing compelling visuals, short-form reels, and promotional copy using Canva, CapCut, and Premiere Pro to tell cohesive brand stories.</p>
+              </div>
+            </li>
+            <li class="principle-item reveal-fade-up">
+              <span class="principle-num">03</span>
+              <div>
+                <h3 class="text-h3">Administrative & CRM Mastery</h3>
+                <p class="text-body" style="margin-top:0.75rem; max-width:44ch;">Keeping operations pristine through efficient task management in Trello, Hubstaff tracking, and advanced GoHighLevel CRM setup.</p>
+              </div>
+            </li>
+            <li class="principle-item reveal-fade-up">
+              <span class="principle-num">04</span>
+              <div>
+                <h3 class="text-h3">Multilingual Adaptability</h3>
+                <p class="text-body" style="margin-top:0.75rem; max-width:44ch;">Bridging global audiences with professional copywriting and translation support across English, Tagalog, and Polish marketing materials.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CAMPAIGNS / CLIENT WORK -->
+    <section id="ventures">
+      <div class="ventures-header">
+        <div>
+          <div class="eyebrow"><div class="eyebrow-dot"></div>Featured Campaigns</div>
+          <h2 class="text-h1" style="margin-top:1.5rem; max-width:14ch;">
+            <span class="reveal-line-wrap"><span class="reveal-line">Projects that</span></span>
+            <span class="reveal-line-wrap"><span class="reveal-line">drove engagement.</span></span>
+          </h2>
+        </div>
+        <div class="text-eyebrow">04 / Highlights</div>
+      </div>
+
+      <ul class="ventures-list">
+        <li class="venture-card reveal-fade-up">
+          <article class="group">
+            <div class="liquid-image-container" style="aspect-ratio:16/11; border-radius:0.125rem;">
+              <div class="liquid-veil"></div>
+              <div class="liquid-glow"></div>
+              <div class="liquid-vignette"></div>
+              <img src="IMAGES/fb.bmp" alt="Łowca Social Media Strategy" />
+            </div>
+            <div class="venture-meta">
+              <div>
+                <h3 class="text-h3 venture-title">Łowca Growth & Giveaway</h3>
+                <p class="text-body" style="margin-top:0.5rem; max-width:42ch;">Executed a two-week promotional campaign with UGC video scripts, deal verification copy, and community rules across Facebook and Instagram.</p>
+              </div>
+              <div style="text-align:right; flex-shrink:0;">
+                <div class="text-eyebrow">2026</div>
+                <div style="margin-top:0.5rem; font-size:0.8125rem; font-weight:500; text-transform:uppercase; letter-spacing:0.18em; color:var(--accent);">Active Campaign</div>
+              </div>
+            </div>
+          </article>
+        </li>
+
+        <li class="venture-card reveal-fade-up">
+          <article class="group">
+            <div class="liquid-image-container" style="aspect-ratio:16/11; border-radius:0.125rem;">
+              <div class="liquid-veil"></div>
+              <div class="liquid-glow"></div>
+              <div class="liquid-vignette"></div>
+              <img src="IMAGES/drama.jpg" alt="Takosa Food Co. Promotions" />
+            </div>
+            <div class="venture-meta">
+              <div>
+                <h3 class="text-h3 venture-title">Takosa Food Co. Reels</h3>
+                <p class="text-body" style="margin-top:0.5rem; max-width:42ch;">Created specialized weekly promotional captions and short-form video storyboards highlighting signature takoyaki offerings.</p>
+              </div>
+              <div style="text-align:right; flex-shrink:0;">
+                <div class="text-eyebrow">2026</div>
+                <div style="margin-top:0.5rem; font-size:0.8125rem; font-weight:500; text-transform:uppercase; letter-spacing:0.18em; color:var(--accent);">Brand Highlight</div>
+              </div>
+            </div>
+          </article>
+        </li>
+      </ul>
+    </section>
+
+<!-- 5. VIDEO REELS & LINKEDIN VIDEO SHOWCASE --> 
+<section id="videos"> 
+  <div class="eyebrow"><div class="eyebrow-dot"></div>Video Portfolio & LinkedIn Content</div> 
+  <h2 class="text-h1" style="margin-top:1.5rem;"> 
+    <span class="reveal-line-wrap"> 
+      <span class="reveal-line">Dynamic content & LinkedIn reels.</span> 
+    </span> </h2> 
+    <p class="text-lead" style="margin-top:1rem; max-width:50ch;"> Explore promotional videos, animated explainers, and professional campaign reels created for LinkedIn and social platforms. </p> 
+    <div class="media-grid three-col"> <!-- Online Marketplace Red Flags: project details retained, video removed --> 
+      <div class="media-card reveal-fade-up"> 
+<img src="IMAGES/Linkedin.JPG" alt="Online Marketplace Red Flags campaign preview" loading="lazy">
+ <div class="media-card-body"> <h3 class="text-h3" style="font-size:1.25rem;">Online Marketplace Red Flags</h3> 
+          <p class="text-body" style="font-size:0.95rem;">Professional awareness animated guide highlighting common warning signs when buying from online listings.</p> 
+        </div> 
+      </div> <!-- Łowca: video retained --> <div class="media-card reveal-fade-up"> <video controls preload="metadata"> <source src="IMAGES/Lowcapromotionvideo.mp4" type="video/mp4"> Your browser does not support the video tag. </video> 
+        <div class="media-card-body"> <h3 class="text-h3" style="font-size:1.25rem;">Łowca Platform Promo Reel</h3> 
+          <p class="text-body" style="font-size:0.95rem;">High-conversion promotional video showcasing deal-checking features and multi-service aggregation.</p> </div> 
+        </div> <!-- Deal Alert & Golf: video retained --> <div class="media-card reveal-fade-up"> <video controls preload="metadata"> <source src="IMAGES/Promotionvideo.mp4" type="video/mp4"> Your browser does not support the video tag. </video> <div class="media-card-body"> 
+          <h3 class="text-h3" style="font-size:1.25rem;">Deal Alert & Golf Campaign</h3> <p class="text-body" style="font-size:0.95rem;">Engaging Polish language campaign video highlighting instant notifications and price comparison.</p> </div> 
+        </div> 
+        <!-- Barista Ace: project details retained, video removed --> 
+         <div class="media-card reveal-fade-up"> <<img src="IMAGES/businessopportunitiesreel.JPG" alt="Barista Ace Business Package project preview" loading="lazy"> 
+        <div class="media-card-body"> <h3 class="text-h3" style="font-size:1.25rem;">Barista Ace Business Package</h3> <p class="text-body" style="font-size:0.95rem;">Comprehensive franchise and training package reel detailing equipment, recipes, and support.</p> </div> 
+      </div> <!-- Takosa: video retained --> <div class="media-card reveal-fade-up"> <video controls preload="metadata"> <source src="IMAGES/Animated_story_about_breakup_and…_20260924140329.mp4" type="video/mp4"> Your browser does not support the video tag. </video> 
+        <div class="media-card-body"> <h3 class="text-h3" style="font-size:1.25rem;">Takosa Storytelling Reel</h3> <p class="text-body" style="font-size:0.95rem;">Narrative-driven social media animation highlighting emotional connection and comfort food solutions.</p> </div> 
+      </div> <!-- AI Tech: project details retained, video removed --> <div class="media-card reveal-fade-up"> <img src="IMAGES/Aivideo.JPG" alt="AI Tech \& Pricing Showcase project preview" loading="lazy">
+         <div class="media-card-body"> <h3 class="text-h3" style="font-size:1.25rem;">AI Tech & Pricing Showcase</h3> <p class="text-body" style="font-size:0.95rem;">Sleek vertical video presentation for modern gadget upgrades and deal tracking.</p> </div> 
+    </div> 
+  </div> 
+</section>
+
+    <!-- 6. REDDIT CONTENT & COMMUNITY MANAGEMENT -->
+    <section id="reddit">
+      <div class="eyebrow"><div class="eyebrow-dot"></div>Reddit Community Management</div>
+      <h2 class="text-h1" style="margin-top:1.5rem;">
+        <span class="reveal-line-wrap"><span class="reveal-line">Subreddit strategy & engagement.</span></span>
+      </h2>
+      <p class="text-lead" style="margin-top:1rem; max-width:50ch;">
+        Managing brand presence, community outreach, and shopping safety discussions on Reddit via <a href="https://www.reddit.com/user/Lowcaokazji" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:underline;">u/Lowcaokazji</a>.
+      </p>
+
+      <div class="media-grid">
+        <div class="media-card reddit-card reveal-fade-up">
+          <img src="IMAGES/reddit2.jpg" alt="Reddit Profile Insights u/Lowcaokazji" />
+          <div class="media-card-body">
+            <h3 class="text-h3" style="font-size:1.25rem;">u/Lowcaokazji Profile & Karma Strategy</h3>
+            <p class="text-body" style="font-size:0.95rem;">Building community trust, posting price tracking tips, and tracking real-time insights across active subreddits.</p>
+          </div>
+        </div>
+
+        <div class="media-card reddit-card reveal-fade-up">
+          <img src="IMAGES/reddit.jpg" alt="Reddit Post Engagement Insights" />
+          <div class="media-card-body">
+            <h3 class="text-h3" style="font-size:1.25rem;">Deal Awareness & Post Insights</h3>
+            <p class="text-body" style="font-size:0.95rem;">Creating targeted discussions on online shopping security, price comparison, and avoiding costly purchasing mistakes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. POSTERS & GRAPHIC DESIGN GALLERY -->
+    <section id="gallery">
+      <div class="eyebrow"><div class="eyebrow-dot"></div>Posters & Graphic Design</div>
+      <h2 class="text-h1" style="margin-top:1.5rem;">
+        <span class="reveal-line-wrap"><span class="reveal-line">Visual marketing collateral.</span></span>
+      </h2>
+      <p class="text-lead" style="margin-top:1rem; max-width:50ch;">
+        A curated display of high-impact marketing posters, product menus, and business opportunity packages created in Canva. Explore even more on my <a href="https://canva.link/d8q219b1noelegd" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:underline;">Canva Portfolio ↗</a>.
+      </p>
+
+      <div class="media-grid three-col">
+        <div class="media-card poster-card reveal-fade-up">
+          <img src="IMAGES/businessopportunityposter.jpg" alt="Celestea Milktea Franchise Poster" />
+          <div class="media-card-body">
+            <h3 class="text-h3" style="font-size:1.25rem;">Celestea Milktea Franchise</h3>
+            <p class="text-body" style="font-size:0.95rem;">Business package and franchise announcement poster featuring signature tea recipes.</p>
+          </div>
+        </div>
+
+        <div class="media-card poster-card reveal-fade-up">
+          <img src="IMAGES/manuposter2.jpg" alt="Foodie Bundle & Burger Menu" />
+          <div class="media-card-body">
+            <h3 class="text-h3" style="font-size:1.25rem;">Foodie Bundle & Burger Menu</h3>
+            <p class="text-body" style="font-size:0.95rem;">Vibrant menu layout highlighting mix & match bundles, quesadillas, and signature wings.</p>
+          </div>
+        </div>
+
+        <div class="media-card poster-card reveal-fade-up">
+          <img src="IMAGES/productposter.jpg" alt="Caramel Macchiato Blended" />
+          <div class="media-card-body">
+            <h3 class="text-h3" style="font-size:1.25rem;">Caramel Macchiato Blended</h3>
+            <p class="text-body" style="font-size:0.95rem;">Detailed product promotion poster showcasing whipped cream, java chips, and sinker add-ons.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. METRICS / IMPACT -->
+    <section id="impact">
+      <div class="eyebrow"><div class="eyebrow-dot"></div>Key Metrics</div>
+      <h2 class="text-h2" style="margin-top:1.5rem;">
+        <span class="reveal-line-wrap"><span class="reveal-line">Experience in numbers.</span></span>
+      </h2>
+
+      <dl class="impact-grid">
+        <div class="stat-cell reveal-fade-up">
+          <dd class="stat-figure">8+</dd>
+          <dt class="text-body">Years of experience in SMM, content creation, and virtual administration.</dt>
+        </div>
+        <div class="stat-cell reveal-fade-up">
+          <dd class="stat-figure">50k+</dd>
+          <dt class="text-body">Active community users reached and engaged through optimized campaign strategies.</dt>
+        </div>
+        <div class="stat-cell reveal-fade-up">
+          <dd class="stat-figure">1M+</dd>
+          <dt class="text-body">Deals, views, and content pieces tracked and saved across multi-platform networks.</dt>
+        </div>
+        <div class="stat-cell reveal-fade-up">
+          <dd class="stat-figure">100%</dd>
+          <dt class="text-body">Commitment to brand elevation, workflow efficiency, and client satisfaction.</dt>
+        </div>
+      </dl>
+    </section>
+
+    <!-- 9. CONTACT & FOOTER -->
+    <section id="contact">
+      <div class="eyebrow"><div class="eyebrow-dot"></div>Get in Touch</div>
+      <h2 class="text-h1" style="margin-top:1.5rem;">
+        <span class="reveal-line-wrap"><span class="reveal-line">Let's build your</span></span>
+        <span class="reveal-line-wrap"><span class="reveal-line">next campaign together.</span></span>
+      </h2>
+
+      <a href="mailto:cece.villamor@gmail.com" class="email-link">
+        cece.villamor@gmail.com ↗
+      </a>
+
+      <!-- Quick Messaging & Social Cards Grid -->
+      <div class="contact-links-grid">
+        <div class="contact-card reveal-fade-up">
+          <h3>Telegram</h3>
+          <p>Message me directly for fast communication & project inquiries.</p>
+          <a href="https://t.me/czessh20" target="_blank" rel="noopener noreferrer">Chat @czessh20 ↗</a>
+        </div>
+        
+        <div class="contact-card reveal-fade-up">
+          <h3>WhatsApp</h3>
+          <p>Connect with me instantly on WhatsApp at +63 906 038 4149.</p>
+          <a href="https://wa.me/639060384149" target="_blank" rel="noopener noreferrer">Message WhatsApp ↗</a>
+        </div>
+
+        <div class="contact-card reveal-fade-up">
+          <h3>Facebook</h3>
+          <p>Visit my professional page / Takosa brand account on Facebook.</p>
+          <a href="https://www.facebook.com/MomaTakosa/" target="_blank" rel="noopener noreferrer">View Facebook ↗</a>
+        </div>
+      </div>
+
+      <div style="margin-top: 3rem;">
+        <a href="https://canva.link/d8q219b1noelegd" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          Explore Canva Portfolio Works ↗
+        </a>
+      </div>
+
+      <footer class="footer-bar">
+        <div class="footer-left">
+          <div class="preloader-brand">Cecibel Villamor</div>
+          <p class="text-body" style="margin-top:0.75rem; max-width:32ch;">Social Media Manager, Content Strategist, and Virtual Assistant based in remote collaboration worldwide.</p>
+        </div>
+        <div class="footer-mid">
+          <div class="text-eyebrow">Navigation</div>
+          <ul style="margin-top:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <li><a href="#story" class="social-link">Expertise</a></li>
+            <li><a href="#ventures" class="social-link">Campaigns</a></li>
+            <li><a href="#videos" class="social-link">Video Reels</a></li>
+            <li><a href="#reddit" class="social-link">Reddit Content</a></li>
+            <li><a href="#gallery" class="social-link">Posters</a></li>
+          </ul>
+        </div>
+        <div class="footer-right">
+          <div class="text-eyebrow">Direct Links</div>
+          <ul style="margin-top:1rem; display:flex; flex-direction:column; gap:0.5rem; align-items:flex-end;">
+            <li><a href="https://t.me/czessh20" target="_blank" rel="noopener noreferrer" class="social-link">Telegram (@czessh20) ↗</a></li>
+            <li><a href="https://wa.me/639060384149" target="_blank" rel="noopener noreferrer" class="social-link">WhatsApp (+639060384149) ↗</a></li>
+            <li><a href="https://www.facebook.com/MomaTakosa/" target="_blank" rel="noopener noreferrer" class="social-link">Facebook Profile ↗</a></li>
+            <li><a href="https://canva.link/d8q219b1noelegd" target="_blank" rel="noopener noreferrer" class="social-link">Canva Portfolio ↗</a></li>
+          </ul>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- Lenis & Interactive Scripts -->
+  <script type="module">
+    import Lenis from 'lenis';
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    let count = 0;
+    const counterEl = document.getElementById('counter-val');
+    const preloader = document.getElementById('preloader');
+    
+    const interval = setInterval(() => {
+      count += Math.floor(Math.random() * 15) + 5;
+      if (count >= 100) {
+        count = 100;
+        clearInterval(interval);
+        setTimeout(() => {
+          preloader.style.transform = 'translateY(-100%)';
+          document.body.classList.add('in-view');
+        }, 400);
+      }
+      counterEl.textContent = count;
+    }, 60);
+
+    const burgerBtn = document.getElementById('burger-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.mobile-nav-link, .canva-mobile').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+      });
+    });
+
+    // Interactive Grayscale-to-Color Mouse Spotlight Effect for Portrait
+    const portraitContainer = document.getElementById('portrait-container');
+    const colorOverlay = document.getElementById('color-overlay');
+
+    portraitContainer.addEventListener('mousemove', (e) => {
+      const rect = portraitContainer.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      colorOverlay.style.setProperty('--mouse-x', `${x}%`);
+      colorOverlay.style.setProperty('--mouse-y', `${y}%`);
+    });
+
+    portraitContainer.addEventListener('mouseleave', () => {
+      colorOverlay.style.setProperty('--mouse-x', `-500px`);
+      colorOverlay.style.setProperty('--mouse-y', `-500px`);
+    });
+  </script>
+</body>
+</html>
